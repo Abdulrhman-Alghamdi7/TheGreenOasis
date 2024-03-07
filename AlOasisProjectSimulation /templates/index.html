@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GOasis</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            text-align: center;
+            background-color: #f2f2f2; /* Light gray background color */
+            color: #333; /* Text color */
+            padding: 20px;
+        }
+        
+        .img{
+            width: auto;
+            height: 5em;
+            align-items: center;
+        }
+
+        h1, h2, h3 {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .report{
+            border: black 5px;
+        }
+    
+        .section {
+            text-align: left;
+            margin-top: 20px;
+            background-color: #fff; /* White background color */
+            padding: 20px;
+            border-radius: 10px;
+            width: 100%; /* Full width for small screens */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+    
+        .section input, .section textarea {
+            width: 100%;
+            padding: 10px; /* Smaller padding */
+            margin: 0 auto; /* Center the input fields */
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px; /* Smaller font size */
+        }
+    
+
+        /* New styles for buttons */
+        .btn-primary {
+            background-color: #007BFF; /* Space blue */
+            color: #fff;
+        }
+
+        .btn-secondary {
+            background-color: #555;
+            color: #fff;
+        }
+        
+        /* Media queries for responsiveness */
+        @media (min-width: 768px) {
+            /* For screens larger than 768px (iPads and computers) */
+            .container {
+                max-width: 800px; /* Limit container width for readability */
+            }
+
+            .section {
+                width: 80%; /* Adjust the width as needed */
+                margin: 0 auto; /* Center the section on larger screens */
+            }
+        }
+    </style>
+
+    
+</head>
+<body>
+    <h1>The Green Oasis Simulation</h1>
+
+    <div id="req">
+    
+        <button onclick="reportRequest()">Simulate</button>
+        <h3 id="T">Report : </h3>
+        <p id="warnote" style="display: none; color: red;" >This is automatical warning</p>
+        <br>
+        <button class="ShowIMG" id="ShowIMG" onclick="showImg()" >Show the image</button>
+        <br>
+        <p id="imgwar" style="display: none; color: red;" >The report is not ready yet!</p>
+        <br>
+
+        <div class="report" id="report"></div>
+    </div>
+    
+    <script>
+        var ImgURL = "none";
+        function showImg() {
+            if (ImgURL === "none"){
+                document.getElementById("imgwar").style.display = "block";
+            }else{
+                window.open(ImgURL, '_blank');
+                document.getElementById("imgwar").style.display = "none";
+            }
+            
+        }
+
+        function reportRequest() {
+            document.getElementById("report").value = "";
+            fetch("/req", {
+                method: "POST",
+                body: JSON.stringify({'':''}),
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            })
+            .then((response) => response.json())
+            .then((data) => {
+                document.getElementById("report").innerText = data.report;
+                ImgURL = data.img
+                type = data.type
+                if (type === "warning"){
+                    document.getElementById("T").textContent = "Warning : ";
+                    document.getElementById("T").style.color = "red";
+                    document.getElementById("warnote").style.display = "block";
+                }else{
+                    document.getElementById("T").textContent = "ٍReport : ";
+                    document.getElementById("T").style.color = "black";
+                    document.getElementById("warnote").style.display = "none";
+                }
+            });
+            
+        }
+    </script>
+</body>
+</html>
